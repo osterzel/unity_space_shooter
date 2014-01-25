@@ -10,10 +10,13 @@ public class GameController : MonoBehaviour
 	public float startWait;
 	public float waveWait;
 	public GUIText scoreText;
+	public GUIText finalScore;
+	public GameObject restartGame;
 	public int score;
-	
+
 	void Start ()
 	{
+		restartGame.SetActive(false);
 		score = 0;
 		StartCoroutine (SpawnWaves ());
 	}
@@ -25,6 +28,7 @@ public class GameController : MonoBehaviour
 		{
 			for (int i = 0; i < hazardCount; i++)
 			{
+				Debug.Log("Spawing hazard");
 				Vector3 spawnPosition = new Vector3 (Random.Range (-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
 				Quaternion spawnRotation = Quaternion.identity;
 				Instantiate (hazard, spawnPosition, spawnRotation);
@@ -43,4 +47,15 @@ public class GameController : MonoBehaviour
 		score += + newScoreValue;
 		updateScore ();
 	}
+
+	public void endGame() {
+		finalScore.text = "Final Score: " + score;
+		scoreText.enabled = false;
+		this.StopAllCoroutines ();
+		restartGame.SetActive (true);
+		//finalScore = "Final Score: " + score;
+
+	}
+
+
 }

@@ -29,6 +29,10 @@ public class DestroybyContact : MonoBehaviour {
 			return;
 		}
 
+		if (this.tag == "Enemy" && other.tag == "Enemy") {
+				return;
+		}
+
 		Instantiate (explosion, transform.position, transform.rotation);
 		if (other.tag == "Player") {
 			Instantiate (playerExplosion, other.transform.position, other.transform.rotation);
@@ -37,5 +41,8 @@ public class DestroybyContact : MonoBehaviour {
 		Destroy(other.gameObject);
 		Destroy (this.gameObject);
 		gameController.addScore (scoreValue);
+		if (other.tag == "Player") {
+			gameController.endGame ();
+		}
 	}
 }
