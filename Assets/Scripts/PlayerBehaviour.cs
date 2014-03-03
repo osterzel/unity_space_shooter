@@ -13,7 +13,7 @@ public class PlayerBehaviour : MonoBehaviour {
 	public float tilt;
 	public Transform shotspawn;
 	public GameObject shot;
-
+	private Vector3 targetPosition;
 	public float fireRate;
 	public float nextFire;
 
@@ -28,22 +28,40 @@ public class PlayerBehaviour : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		float moveHorizontal = Input.GetAxis ("Horizontal");
-		float moveVertical = Input.GetAxis ("Vertical");
 
-		Vector3 movement = new Vector3 ( moveHorizontal, 0.0f, moveVertical);
+		/*if (Application.platform != RuntimePlatform.IPhonePlayer) {
+			float moveHorizontal = Input.GetAxis ("Horizontal");
+			float moveVertical = Input.GetAxis ("Vertical");
 
-		rigidbody.velocity = movement * speed;
+			Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 
-		rigidbody.position = new Vector3 
-		(
-				Mathf.Clamp (rigidbody.position.x, boundary.xMin, boundary.xMax),
-				0.0f,
-				Mathf.Clamp (rigidbody.position.z, boundary.zMin, boundary.zMax)
-		);
+			rigidbody.velocity = movement * speed;
 
-		rigidbody.rotation = Quaternion.Euler (0.0f, 0.0f, rigidbody.velocity.x * -tilt);
+			rigidbody.position = new Vector3 
+(
+			Mathf.Clamp (rigidbody.position.x, boundary.xMin, boundary.xMax),		
+			0.0f,
+			Mathf.Clamp (rigidbody.position.z, boundary.zMin, boundary.zMax)
+			);
 
+			rigidbody.rotation = Quaternion.Euler (0.0f, 0.0f, rigidbody.velocity.x * -tilt);
+		} else {*/
+			if (Input.touchCount >= 1) {
+				Ray ray = Camera.main.ScreenPointToRay(Input.touches[0].position);
+				Plane plane = new Plane(Vector3.up, 0f);
+				float enter;
+				plane.Raycast(ray, out enter);
+				targetPosition = ray.GetPoint(enter);
+			}
+
+		targetPosition.x = Mathf.Clamp (targetPosition.x, boundary.xMin, boundary.xMax);
+		targetPosition.z = Mathf.Clamp (targetPosition.z, boundary.zMin, boundary.zMax);
+		float distance = Vector3.Distance (targetPosition, rigidbody.position);
+
+		rigidbody.position = Vector3.Lerp (rigidbody.position, targetPosition, 0.01f + (distance / 70));
+
+
+		//}
 	}
 
 }
